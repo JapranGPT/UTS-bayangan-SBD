@@ -1,0 +1,107 @@
+1. 
+Database yang saya buat adalah untuk perusahaan agen penyewaan properti yang punya beberapa kantor cabang di Inggris. 
+
+Branch= kantor cabang atau kantor pusat perusahaan
+Staff= pegawai yang bekerja di ebuah perusahaan
+PropertyForrent= Daftar barang atau property yang di sewakan oleh perusahaan
+Client= Calon penyewa property perusahaan
+PrivateOwner= Pemilik rumah yang menitipkan rumah nya untuk disewakan
+Viewing= catatan client yang sudah melihat property, dan mmberikan komentar nya
+Registration= catatan client yang daftar di cabang tersebut
+
+2. 
+SELECT staffNo, fName, lName, position, salary, branchNo
+FROM Staff
+WHERE salary < 10000;
+
+
+staffno	fname	lname	position	salary	branchno
+
+SA9	    Mary	Howe	Assistant	9000	B007
+SL41    Julie	Lee	        Assistant	9000	B005
+
+3.
+SELECT staffNo, fName, lName, salary,
+       salary * 0.10            AS bonus,
+       salary + (salary * 0.10) AS gaji_setelah_bonus
+FROM Staff
+ORDER BY salary DESC;
+
+
+staffno	fname	lname	salary	bonus	gaji_setelah_bonus
+
+SL21    John	White	30000	3000	33000
+SG5     Susan	Brand	24000	2400	26400
+SG14	David	Ford    18000	1800	19800
+SG37	Ann	Beech	12000	1200	13200
+SA9     Mary	Howe	9000	900	9900
+SL41	Julie 	Lee     9000	900     9900
+
+4.
+SELECT propertyNo, street, city, postcode, type, rooms, rent
+FROM PropertyForRent
+WHERE city <> 'London'
+ORDER BY city, propertyNo;
+
+
+propertyno	street		city    	postcode 	type 	rooms	rent
+
+PA14		16 Holhead	Aberdeen	AB7 5SU  	House	6       650
+PG16		5 Novar Dr	Glasgow	        G12 9AX  	Flat  	4	450
+PG21		18 Dale Rd	Glasgow         G12      	House	5	600
+PG36		2 Manor Rd	Glasgow	        G32 4QX  	Flat  	3	375
+PG4 		6 Lawrence St	Glasgow	        G11 9QX	        Flat  	3       350
+
+5.
+SELECT v.clientNo, v.propertyNo, p.street, p.city, v.viewDate, v.comment
+FROM Viewing v
+JOIN PropertyForRent p ON v.propertyNo = p.propertyNo
+WHERE v.comment IS NULL;
+
+
+clientno	propertyno	street	             city	viewdate	 comment
+
+CR56		PG4    	        6 Lawrence St	    Glasgow	2004-05-26	(kosong)
+CR56		PG36            2 Manor Rd	    Glasgow	2004-04-28	(kosong)
+
+
+6.
+SELECT ownerNo, fName, lName, address, telNo
+FROM PrivateOwner
+WHERE fName LIKE 'T%';
+
+
+ownerno	fname	lname	address    	                telno
+CO40	Tina 	Murphy	63 Well St, Glasgow G42 	0141-943-1728
+CO93	Tony	Shaw	12 Park Pl, Glasgow G4 0QR	0141-225-7025
+
+7.
+SELECT p.propertyNo,
+            p.type,
+            p.street,
+            p.city,
+            p.postcode,
+            p.rent,
+            o.fName || ' ' || o.lName AS pemilik,
+            o.address                       AS alamat_pemilik,
+            o.telNo
+FROM PropertyForRent p
+JOIN   PrivateOwner o ON p.ownerNo = o.ownerNo
+WHERE p.rent < 500
+ORDER BY p.rent;
+
+propertyno	type	street	city	postcode	rent	pemilik	alamat_pemilik	telno
+
+PG4;Flat;6 Lawrence St;Glasgow;G11 9QX;350;Tina Murphy;63 Well St, Glasgow G42;0141-943-1728
+
+PG36;Flat;2 Manor Rd;Glasgow;G32 4QX;375;Tony Shaw;12 Park Pl, Glasgow G4;0QR;0141-225-7025
+
+PL94;Flat;6 Argyll St	London;NW2;400;Carol Farrel;6 Achray St, Glasgow G32 9DX;0141-357-7419
+
+PG16;Flat;5 Novar Dr;Glasgow;G129AX;450;Tony Shaw;12 Park Pl, Glasgow G4 0QR;0141-225-7025
+
+Ada 4 properti yang sewanya di bawah 500, dan semuanya bertipe Flat. Dua properti lain (PA14 dan PG21, keduanya bertipe House) harga sewanya 600 ke atas, jadi tidak masuk dalam daftar permintaan.
+Tony Shaw memiliki nya.
+
+*catatan= tanda (;) hanya untuk pembatas karena teks nya terlalu panjang
+
